@@ -8,6 +8,12 @@
 #include <string>
 #include <wiringSerial.h>
 
+#include "config.hpp"
+
+#ifdef DEBUG
+#include <OIS/OISJoyStick.h>
+#endif
+
 #include "robotContol.h"
 
 namespace Control {

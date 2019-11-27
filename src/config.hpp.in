@@ -1,0 +1,11 @@
+//
+// Created by pi on 26/11/2019.
+//
+
+#ifndef BEHOLDER_CONFIG_HPP_IN
+#define BEHOLDER_CONFIG_HPP_IN
+
+#cmakedefine BUILD_LOCAL_CONTROLLER
+#cmakedefine BUILD_REMOTE_CONTROLLER
+
+#endif //BEHOLDER_CONFIG_HPP_IN

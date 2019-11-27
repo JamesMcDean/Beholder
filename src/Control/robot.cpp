@@ -6,7 +6,7 @@
 
 namespace Control {
     int findRobot() {
-
+	
     }
 
     void updateRobotState(int port, ROBOT_CONTROL_BULK state) {
