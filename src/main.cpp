@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-int main() {
+auto main(int argc, char* argv[]) -> int {
     std::cout << "oi" << std::endl;
     return 0;
 }
