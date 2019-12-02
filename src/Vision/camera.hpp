@@ -33,12 +33,12 @@ namespace Vision {
         Camera(const std::string& devicePath, const std::string& settingsPath);
         ~Camera();
 
-        void capture();
-        void capture(uint delayMillis);
+        auto capture() -> void;
+        auto capture(uint delayMillis) -> void;
 
-        cv::Mat read();
+        auto read() -> cv::Mat;
 
-        bool isCalibrated();
+        auto isCalibrated() -> bool;
     };
 }
 

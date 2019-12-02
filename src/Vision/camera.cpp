@@ -23,7 +23,7 @@ namespace Vision {
         device.release();
     }
 
-    void Camera::capture() {
+    auto Camera::capture() -> void {
         device >> rawImage;
 
         if (!isCalibrated()) {
@@ -33,27 +33,27 @@ namespace Vision {
         // TODO - Calibration math
     }
 
-    void Camera::capture(uint delayMillis) {
+    auto Camera::capture(uint delayMillis) -> void {
         if (!delayFinished) delayedCapture.join();
 
         delayedCapture = std::thread(
-                [this, delayMillis](Camera* parent, uint delay) {
-            parent->delayFinished = false;
+                [this, delayMillis]() {
+            this->delayFinished = false;
 
-            usleep(delay);
-            parent->capture();
+            usleep(delayMillis);
+            this->capture();
 
-            parent->delayFinished = true;
+            this->delayFinished = true;
         });
 
         delayedCapture.detach();
     }
 
-    cv::Mat Camera::read() {
+    auto Camera::read() -> cv::Mat {
         return isCalibrated() ? calibratedImage : rawImage;
     }
 
-    bool Camera::isCalibrated() {
+    auto Camera::isCalibrated() -> bool {
         return !settingsPath.empty();
     }
 }
