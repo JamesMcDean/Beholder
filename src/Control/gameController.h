@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#define BUTTON_FLAGS uint16_t
+typedef uint16_t BUTTON_FLAGS;
 enum buttonFlags {
     BUTTON_none = 0,
     
