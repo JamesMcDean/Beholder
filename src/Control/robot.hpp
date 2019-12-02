@@ -5,12 +5,6 @@
 #ifndef BEHOLDER_ROBOT_HPP
 #define BEHOLDER_ROBOT_HPP
 
-#include <string>
-#include <wiringSerial.h>
-
-#include "config.hpp"
-
-#include <OIS/OISJoyStick.h>
 #include <wiringSerial.h>
 #include <string>
 #include <filesystem>
@@ -20,6 +14,7 @@
 #include <cmath>
 #include <thread>
 
+#include "config.hpp"
 #include "robotContol.h"
 
 /**
@@ -30,6 +25,7 @@ namespace Control {
      * The poorly hashed ID of a robot.
      */
     typedef int32_t ROBOT_ID;
+    typedef int32_t LOOP_ID;
 
     /**
      * Removes all dead connections and returns them as a vector.
@@ -52,6 +48,8 @@ namespace Control {
      * @param state The state of the body and guns of the robot to update to.
      */
     auto updateRobotState(ROBOT_ID id, ROBOT_CONTROL_BULK state) -> void;
+
+    auto createControlLoop() -> LOOP_ID;
 }
 
 #endif //BEHOLDER_ROBOT_HPP
