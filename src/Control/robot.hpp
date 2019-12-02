@@ -10,15 +10,24 @@
 
 #include "config.hpp"
 
-#ifdef DEBUG
 #include <OIS/OISJoyStick.h>
-#endif
+#include <wiringSerial.h>
+#include <string>
+#include <filesystem>
+#include <vector>
+#include <map>
+#include <ctime>
+#include <cmath>
+#include <thread>
 
 #include "robotContol.h"
 
 namespace Control {
-    int findRobot();
-    void updateRobotState(int port, ROBOT_CONTROL_BULK state);
+    typedef int32_t ROBOT_ID;
+
+    auto clean(const char* responseChar) -> std::vector<ROBOT_ID>;
+    auto connect(const std::string& devicePath, int baud) -> ROBOT_ID;
+    auto updateRobotState(int port, ROBOT_CONTROL_BULK state) -> void;
 }
 
 #endif //BEHOLDER_ROBOT_HPP
