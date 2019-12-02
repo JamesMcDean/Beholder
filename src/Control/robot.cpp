@@ -37,10 +37,12 @@ namespace Control {
                 serialPuts(fd, "TOK");
                 std::this_thread::sleep_for(std::chrono::milliseconds(SERIAL_WAIT_TIME_MILLIS));
 
-                if (serialDataAvail(fd) && serialGetchar(fd) == (responseChar == nullptr ? '!' : *responseChar)) {
+                if (serialDataAvail(fd) && (responseChar == nullptr || serialGetchar(fd) == *responseChar)) {
+                    serialFlush(fd);
                     std::terminate();
                 }
 
+                serialClose(id);
                 _idsToFD.erase(id);
                 result.push_back(id);
             });
@@ -57,9 +59,11 @@ namespace Control {
         return result;
     }
 
-    auto updateRobotState(int id, ROBOT_CONTROL_BULK state) -> void {
+    auto updateRobotState(ROBOT_ID id, ROBOT_CONTROL_BULK state) -> void {
+        auto fd = _idsToFD.at(id);
+
         char* stateChars = reinterpret_cast<char*>(&state);
-        serialPutchar(id, 'S');
-        serialPuts(id, stateChars);
+        serialPutchar(fd, 'S');
+        serialPuts(fd, stateChars);
     }
 }
