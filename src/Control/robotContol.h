@@ -1,11 +1,10 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #ifndef GENERAL_ROBOT_CONTROL_H
 #define GENERAL_ROBOT_CONTROL_H
 
-/*
-All values are in the range [-1.0, 1.0]
-*/
+/**
+ * Holds all different control states for a robot.
+ * All states are in the rand [-1.0, 1.0]
+ */
 typedef struct {
     float base_forward;             // +: Forward; -: Backward
     float base_strafe;              // +: Right; -: Left
@@ -19,4 +18,3 @@ typedef struct {
 } ROBOT_CONTROL_BULK;
 
 #endif
-#pragma clang diagnostic pop

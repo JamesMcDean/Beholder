@@ -7,7 +7,14 @@
 
 #include <stdint.h>
 
+/**
+ * Holds the @enum buttonFlags in a specific size.
+ */
 typedef uint16_t BUTTON_FLAGS;
+
+/**
+ * Different buttons that can be pressed on a standard gamepad.
+ */
 enum buttonFlags {
     BUTTON_none = 0,
     
@@ -32,6 +39,9 @@ enum buttonFlags {
     BUTTON_sysHome =            1u<<14u
 };
 
+/**
+ * Holds all variable inputs from a standard game controller.
+ */
 typedef struct {
     // [0.0, 1.0]
     float leftTrigger;
