@@ -25,29 +25,32 @@ namespace Control {
 
     auto clean(const char* responseChar = nullptr) -> std::vector<ROBOT_ID> {
         // Running data
-        std::vector<std::thread> threads;
-        std::vector<ROBOT_ID> result;
+        auto threads = std::vector<std::thread>();
+        auto result = std::vector<ROBOT_ID>();
 
         // Check for unresponsive serial connections
         for (auto const& [key, val] : _idsToFD) {
             ROBOT_ID id = key;
             auto fd = val;
 
-            std::thread thread([id, fd, &result, responseChar]() {
-                serialPuts(fd, "TOK");
+            // Starts a thread for testing
+            threads.push_back(std::thread([id, fd, &result, responseChar]() {
+                // TEST
+                serialPutchar(fd, SERIAL_TEST_CHAR);
+                serialPuts(fd, "OK");
                 std::this_thread::sleep_for(std::chrono::milliseconds(SERIAL_WAIT_TIME_MILLIS));
 
+                // ACK
                 if (serialDataAvail(fd) && (responseChar == nullptr || serialGetchar(fd) == *responseChar)) {
                     serialFlush(fd);
                     std::terminate();
                 }
 
+                // FAIL
                 serialClose(id);
                 _idsToFD.erase(id);
                 result.push_back(id);
-            });
-            thread.detach();
-            threads.push_back(thread);
+            }));
         }
 
         // Wait for worker threads
@@ -63,7 +66,7 @@ namespace Control {
         auto fd = _idsToFD.at(id);
 
         char* stateChars = reinterpret_cast<char*>(&state);
-        serialPutchar(fd, 'S');
+        serialPutchar(fd, SERIAL_STATE_CHAR);
         serialPuts(fd, stateChars);
     }
 }
