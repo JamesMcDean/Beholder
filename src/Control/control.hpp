@@ -2,8 +2,8 @@
 // Created by James on 11/7/2019.
 //
 
-#ifndef BEHOLDER_ROBOT_HPP
-#define BEHOLDER_ROBOT_HPP
+#ifndef BEHOLDER_CONTROL_HPP
+#define BEHOLDER_CONTROL_HPP
 
 #include <wiringSerial.h>
 #include <string>
@@ -15,7 +15,7 @@
 #include <thread>
 
 #include "config.hpp"
-#include "robotContol.h"
+#include "robotcontol.h"
 
 /**
  * Methods for getting data from control sources and to robot sources.
@@ -25,6 +25,10 @@ namespace Control {
      * The poorly hashed ID of a robot.
      */
     typedef int32_t ROBOT_ID;
+
+    /**
+     * The poorly hashed ID of a control loop.
+     */
     typedef int32_t LOOP_ID;
 
     /**
@@ -49,7 +53,12 @@ namespace Control {
      */
     auto updateRobotState(ROBOT_ID id, ROBOT_CONTROL_BULK state) -> void;
 
-    auto createControlLoop() -> LOOP_ID;
+    /**
+     * Checks if a robot is registered.
+     * @param cleanFirst Whether to run the clean() method prior to checking the registration map.
+     * @return If the robot is in the registration map.
+     */
+    auto isRobotRegistered(ROBOT_ID id, bool cleanFirst = false) -> bool;
 }
 
-#endif //BEHOLDER_ROBOT_HPP
+#endif //BEHOLDER_CONTROL_HPP

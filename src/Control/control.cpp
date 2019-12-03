@@ -2,7 +2,8 @@
 // Created by James on 11/7/2019.
 //
 
-#include "robot.hpp"
+#include "control.hpp"
+#include "math.cpp"
 namespace fs = std::filesystem;
 
 namespace Control {
@@ -15,8 +16,8 @@ namespace Control {
         if (result < 0) return NULL;
 
         // Find mediocre id hash
-        int32_t id = ((clock() * 29) % (int32_t) (pow(2, 32) - 1)) + 1;
-        while (_idsToFD.count(id) || id == 0) id = ((clock() * 29) % (int) (pow(2, 32) - 1)) + 1;
+        int32_t id = shittyHashToken();
+        while (_idsToFD.count(id)) id = shittyHashToken();
 
         // Save
         _idsToFD.insert(std::pair<int, int>(id, result));
@@ -34,7 +35,7 @@ namespace Control {
             auto fd = val;
 
             // Starts a thread for testing
-            threads.push_back(std::thread([id, fd, &result, responseChar]() {
+            threads.emplace_back([id, fd, &result, responseChar]() {
                 // TEST
                 serialPutchar(fd, SERIAL_TEST_CHAR);
                 serialPuts(fd, "OK");
@@ -50,7 +51,7 @@ namespace Control {
                 serialClose(id);
                 _idsToFD.erase(id);
                 result.push_back(id);
-            }));
+            });
         }
 
         // Wait for worker threads
@@ -68,5 +69,10 @@ namespace Control {
         char* stateChars = reinterpret_cast<char*>(&state);
         serialPutchar(fd, SERIAL_STATE_CHAR);
         serialPuts(fd, stateChars);
+    }
+
+    auto isRobotRegistered(ROBOT_ID id, bool cleanFirst) -> bool {
+        if (cleanFirst) clean();
+        return _idsToFD.count(id) > 0;
     }
 }

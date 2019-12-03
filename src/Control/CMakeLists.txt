@@ -1,3 +1,3 @@
 project(Control)
 
-add_library(Control gameController.h robotContol.h robot.hpp robot.cpp ../config.hpp.in)
+add_library(Control gamecontroller.h robotcontol.h control.hpp control.cpp ../config.hpp.in streamcontrol.hpp streamcontroldaemon.cpp streamcontroldaemon.hpp math.cpp)

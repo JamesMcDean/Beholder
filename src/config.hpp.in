@@ -12,4 +12,6 @@
 #define SERIAL_STATE_CHAR 'S'
 #define SERIAL_TEST_CHAR 'T'
 
+#define REMOTE_PORT 5455
+
 #endif //BEHOLDER_CONFIG_HPP_IN
