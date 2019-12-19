@@ -18,9 +18,8 @@
 typedef struct {
     float rumbleLevel; // [0.0, 1.0]
     uint32_t rumbleTime; // Milliseconds
-
-    ROBOT_CONTROL_BULK robotControlData;
-    uint8_t frame[STREAM_COLOR_LENGTH * STREAM_WIDTH * STREAM_HEIGHT]; // Row Major
+    ROBOT_CONTROL_BULK robotControlData; // Current robot positioning
+    size_t frameLength;
 } STREAM_CONTROL_DATA;
 
 #endif //BEHOLDER_REMOTE_CONTROL_HPP

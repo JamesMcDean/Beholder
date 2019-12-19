@@ -17,6 +17,8 @@ include_directories("Movement")
 add_subdirectory(Movement)
 include_directories("Vision")
 add_subdirectory(Vision)
+include_directories("Exceptions")
+add_subdirectory(Exceptions)
 
 # Honestly, I hated the main sitting in apps, it didn't make
 # sense if I am not even making a library, so, fuck it, it's src
@@ -24,4 +26,5 @@ add_executable(Beholder main.cpp config.hpp)
 target_link_libraries(Beholder
         PUBLIC Control
         PUBLIC Vision
-        PUBLIC Movement)
+        PUBLIC Movement
+        PUBLIC Exceptions)

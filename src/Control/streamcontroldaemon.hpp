@@ -6,25 +6,31 @@
 #define BEHOLDER_STREAM_CONTROL_DAEMON_HPP
 
 #include <thread>
-#include <unistd.h>
-#include <sys/socket.h>
 #include <cstdlib>
-#include <netinet/in.h>
 #include <map>
+#include <iostream>
 
 #include "control.hpp"
 #include "streamcontrol.hpp"
 #include "config.hpp"
+#include "gamecontroller.h"
+
+#include <boost/asio.hpp>
 
 namespace Control {
     class StreamControlDaemon {
     private:
-        std::thread workerThread;
+        std::thread __workerThread;
         std::shared_ptr<bool> running;
 
-        static auto workerMain(ROBOT_ID bot, uint16_t port, const std::shared_ptr<bool>& active) -> void;
+        static auto workerMain(ROBOT_ID bot, uint16_t videoPort, uint16_t controlPort,
+                const std::shared_ptr<bool>& active) -> void;
+
+        static auto socketRead(boost::asio::ip::tcp::socket& socket) -> GAME_CONTROLLER_BULK;
+        static auto socketWrite(boost::asio::ip::tcp::socket& socket, const STREAM_CONTROL_DATA& data) -> void;
     protected:
-        const uint16_t port;
+        const uint16_t videoPort;
+        const uint16_t controlPort;
         const ROBOT_ID bot;
 
     public:
@@ -34,7 +40,8 @@ namespace Control {
          * @param port The networking port to use for the stream communication.
          * @param start Start the daemon on construction.
          */
-        explicit StreamControlDaemon(ROBOT_ID id, uint16_t port = REMOTE_PORT, bool start = false);
+        explicit StreamControlDaemon(ROBOT_ID id, uint16_t videoPort = REMOTE_VIDEO_PORT,
+                uint16_t controlPort = REMOTE_CONTROL_PORT, bool start = false);
         ~StreamControlDaemon();
 
         /**
