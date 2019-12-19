@@ -16,6 +16,7 @@
 
 #include "config.hpp"
 #include "robotcontol.h"
+#include "gamecontroller.h"
 
 /**
  * Methods for getting data from control sources and to robot sources.
@@ -59,6 +60,8 @@ namespace Control {
      * @return If the robot is in the registration map.
      */
     auto isRobotRegistered(ROBOT_ID id, bool cleanFirst = false) -> bool;
+
+    auto createRobotState(ROBOT_ID id, bool relative, GAME_CONTROLLER_BULK data) -> ROBOT_CONTROL_BULK;
 }
 
 #endif //BEHOLDER_CONTROL_HPP

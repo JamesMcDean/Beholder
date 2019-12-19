@@ -13,7 +13,7 @@ namespace Control {
         // Try to connect
         // TODO - Check if this needs root for whatever reason
         int result = serialOpen(devicePath.c_str(), baud);
-        if (result < 0) return NULL;
+        if (result < 0) return (ROBOT_ID) 0;
 
         // Find mediocre id hash
         int32_t id = shittyHashToken();
