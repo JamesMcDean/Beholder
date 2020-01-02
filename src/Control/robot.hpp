@@ -14,7 +14,6 @@
 #include "gamecontroller.h"
 #include "streamcontrol.hpp"
 
-#include "connectionexceptions.hpp"
 #include "camera.hpp"
 
 #include <wiringSerial.h>
@@ -43,16 +42,17 @@ namespace Control {
          * Gets the current milliseconds since January 1st, 1970.
          * @return The milliseconds since January 1st, 1970.
          */
-        static auto __currentTime() -> std::chrono::milliseconds;
+        static auto __currentTime() noexcept -> std::chrono::milliseconds;
 
         /**
          * Sends the state contained in _robotState to the robot over serial.
          */
-        auto __updateState() -> void;
+        auto __updateState() noexcept -> void;
 
     protected:
         std::vector<std::shared_ptr<Vision::Camera>> _cameras;
-        STREAM_CONTROL_DATA _streamData; // Row major
+
+        STREAM_CONTROL_DATA _streamData;
         uint8_t* _previousFrame;
 
         GAME_CONTROLLER_BULK _controllerState = {0};
@@ -60,14 +60,45 @@ namespace Control {
         std::chrono::milliseconds _lastUpdate = __currentTime();
 
     public:
+        /**
+         * Constructs the robot with only one camera and no response char defined.
+         * @param devicePath The path to the serial device in *nix.
+         * @param baud The baud rate to communicate over serial with.
+         * @param camera The shared reference to the camera provided for the robot.
+         */
         Robot(const std::string& devicePath, int baud, const std::shared_ptr<Vision::Camera>& camera);
+
+        /**
+         * Constructs the robot with multiple cameras and no response char defined.
+         * @param devicePath The path to the serial device in *nix.
+         * @param baud The baud rate to communicate over serial with.
+         * @param cameras A vector of shared pointers to the cameras provided for the robot.
+         */
         Robot(const std::string& devicePath, int baud, const std::vector<std::shared_ptr<Vision::Camera>>& cameras);
 
+        /**
+         * Constructs the robot with only one camera and a response char defined.
+         * @param devicePath The path to the serial device in *nix.
+         * @param baud The baud rate to communicate over serial with.
+         * @param camera The shared reference to the camera provided for the robot.
+         * @param responseChar The char to listen for when sending the test message.
+         */
         Robot(const std::string& devicePath, int baud,
                 const std::shared_ptr<Vision::Camera>& camera, char responseChar);
+
+        /**
+         * Constructs the robot with multiple cameras and a response char defined.
+         * @param devicePath The path to the serial device in *nix.
+         * @param baud The baud rate to communicate over serial with.
+         * @param cameras A vector of shared pointers to the cameras provided for the robot.
+         * @param responseChar The char to listen for when sending the test message.
+         */
         Robot(const std::string& devicePath, int baud,
                 const std::vector<std::shared_ptr<Vision::Camera>>& cameras, char responseChar);
 
+        /**
+         * Deconstructs and disconnects from the robot.
+         */
         ~Robot();
 
         /**
@@ -75,19 +106,19 @@ namespace Control {
          * during construction.
          * @return If the robot is connected.
          */
-        auto isConnected() -> bool;
+        auto isConnected() noexcept -> bool;
 
         /**
          * Get the data to send over the stream.
          * @return The data to send over the stream.
          */
-        auto getStreamData() -> STREAM_CONTROL_DATA;
+        auto getStreamData() noexcept -> STREAM_CONTROL_DATA;
 
         /**
          * Gets the raw frame of the stream to send over the stream.
          * @return The raw frame of the stream.
          */
-        auto getStreamFrame() -> uint8_t*;
+        auto getStreamFrame() noexcept -> uint8_t*;
 
         /**
          * Gets the most recently captured frame from the camera at the index provided.

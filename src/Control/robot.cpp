@@ -8,7 +8,7 @@ namespace Control {
     auto Robot::__init(const std::string& devicePath, int baud, std::vector<std::shared_ptr<Vision::Camera>> cameras,
                        char responseChar, bool useResponseChar) -> void {
         __fd = serialOpen(devicePath.c_str(), baud);
-        if (__fd < 0) throw Exceptions::SerialException((std::string) "Could not open serial for "
+        if (__fd < 0) throw std::runtime_error((std::string) "Could not open serial for "
                                                         + "the device at \"" + devicePath + "\" with the speed of "
                                                         + std::to_string(baud) + " baud.");
 
@@ -16,13 +16,13 @@ namespace Control {
         if (useResponseChar) __responseChar = std::make_unique<char>(responseChar);
     }
 
-    auto Robot::__currentTime() -> std::chrono::milliseconds {
+    auto Robot::__currentTime() noexcept -> std::chrono::milliseconds {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::steady_clock::now().time_since_epoch()
                 );
     }
 
-    auto Robot::__updateState() -> void {
+    auto Robot::__updateState() noexcept -> void {
         char* structTape = static_cast<char*>(static_cast<void*>(&_robotState));
         serialPutchar(__fd, Config::SERIAL_STATE_CHAR);
         serialPuts(__fd, structTape);
@@ -58,7 +58,7 @@ namespace Control {
         serialClose(__fd);
     }
 
-    auto Robot::isConnected() -> bool {
+    auto Robot::isConnected() noexcept -> bool {
         // TEST
         serialPutchar(__fd, Config::SERIAL_TEST_CHAR);
         serialPuts(__fd, "OK");
@@ -73,11 +73,11 @@ namespace Control {
         return false;
     }
 
-    auto Robot::getStreamData() -> STREAM_CONTROL_DATA {
+    auto Robot::getStreamData() noexcept -> STREAM_CONTROL_DATA {
         return _streamData;
     }
 
-    auto Robot::getStreamFrame() -> uint8_t* {
+    auto Robot::getStreamFrame() noexcept -> uint8_t* {
         return _previousFrame;
     }
 
