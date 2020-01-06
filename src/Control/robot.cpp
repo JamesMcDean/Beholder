@@ -5,6 +5,49 @@
 #include "robot.hpp"
 
 namespace Control {
+    auto findPotentialSerialPorts() -> std::shared_ptr<std::vector<std::tuple<std::string, speed_t>>> {
+        // Get potential paths
+        DIR* dir;
+        if ((dir = opendir("/dev/")) == nullptr) {
+            return nullptr;
+        }
+
+        struct dirent* ent;
+        int fd;
+        struct termios options = {0};
+        std::vector<std::tuple<std::string, speed_t>> result;
+        std::vector<std::string> found;
+
+        while ((ent = readdir(dir)) != nullptr) {
+            found.emplace_back(ent->d_name);
+        }
+        closedir(dir);
+
+        // Attempt connections with various baud rates
+        for (const auto& port : found) {
+            // Check if it is Serial
+            fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY); // NOLINT(hicpp-signed-bitwise)
+            if (fd == -1) continue;
+
+            // Find fastest baud rate
+            const speed_t BAUDS[] = {B300, B600, B1200, B2400, B4800, B9600, B19200, B38400, B57600, B115200};
+            tcgetattr(fd, &options);
+            int index;
+            for (index = 9; index >= 0; index--) {
+                speed_t baud = BAUDS[index];
+                if (cfsetospeed(&options, baud) < 0) continue;
+                if (cfsetispeed(&options, baud) < 0) continue;
+
+                result.emplace_back(std::make_tuple(port, baud));
+                break;
+            }
+
+            close(fd);
+        }
+
+        return std::make_shared<std::vector<std::tuple<std::string, speed_t>>>(result);
+    }
+
     auto Robot::__init(const std::string& devicePath, int baud, std::vector<std::shared_ptr<Vision::Camera>> cameras,
                        char responseChar, bool useResponseChar) -> void {
         __fd = serialOpen(devicePath.c_str(), baud);

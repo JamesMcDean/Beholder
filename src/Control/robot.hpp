@@ -9,6 +9,9 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <dirent.h>
+#include <fcntl.h>
+#include <termios.h>
 
 #include "robotcontol.h"
 #include "gamecontroller.h"
@@ -22,6 +25,13 @@
 #include "config.hpp"
 
 namespace Control {
+    /**
+     * Looks through the /dev/ directory in the local system and finds potential serial ports.
+     *  note: Looking at baud rates {B300, B600, B1200, B2400, B4800, B9600, B19200, B38400, B57600, B115200}.
+     * @return A vector of paths contained in strings or nullptr if /dev/ could not be opened.
+     */
+    auto findPotentialSerialPorts() -> std::shared_ptr<std::vector<std::tuple<std::string, speed_t>>>;
+
     class Robot {
     private:
         int __fd;
