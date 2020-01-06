@@ -28,7 +28,7 @@ add_subdirectory(Movement)
 include_directories("Vision")
 add_subdirectory(Vision)
 
-add_executable(Beholder main.cpp config.hpp)
+add_executable(Beholder main.cpp config.hpp main.hpp)
 target_link_libraries(Beholder
         PUBLIC Control
         PUBLIC Vision
