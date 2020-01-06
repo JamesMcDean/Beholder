@@ -8,6 +8,9 @@
 #include <cstdint>
 
 namespace Config {
+    const uint8_t VERSION_MAJOR = 0;
+    const uint8_t VERSION_MINOR = 1;
+
     const uint32_t SERIAL_RESPONSE_TIME_MILLIS = @SERIAL_RESPONSE_TIME@;
     const char SERIAL_STATE_CHAR = '@SERIAL_STATE_CHAR@';
     const char SERIAL_TEST_CHAR = '@SERIAL_TEST_CHAR@';
@@ -17,6 +20,8 @@ namespace Config {
 
     const float ROBOT_SPEED_PER_SEC = @ROBOT_SPEED_PER_SECOND@;
     const float TRIGGER_FIRING_THRESHOLD = @TRIGGER_FIRING_THRESHOLD@;
+
+    bool VERBOSE = false;
 }
 
 #endif //BEHOLDER_CONFIG_HPP_IN
