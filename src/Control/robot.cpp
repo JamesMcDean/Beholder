@@ -33,7 +33,7 @@ namespace Control {
             const speed_t BAUDS[] = {B300, B600, B1200, B2400, B4800, B9600, B19200, B38400, B57600, B115200};
             tcgetattr(fd, &options);
             int index;
-            for (index = 9; index >= 0; index--) {
+            for (index = sizeof(BAUDS) / sizeof(*BAUDS); index >= 0; index--) {
                 speed_t baud = BAUDS[index];
                 if (cfsetospeed(&options, baud) < 0) continue;
                 if (cfsetispeed(&options, baud) < 0) continue;

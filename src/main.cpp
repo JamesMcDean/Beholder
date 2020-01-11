@@ -13,6 +13,7 @@ auto main(int argc, char* argv[]) -> int {
     }
 
 
+
     return 0;
 }
 
@@ -96,7 +97,7 @@ auto compileArguments(int argc, char* argv[]) -> struct inputs {
                 printVersion();
             }
             else if (fArg == "verbose") {
-                Config::VERBOSE = true;
+                Config::verbose(true);
             }
             else if (index < argc - 1) {
                 std::string next = argv[index + 1];
@@ -153,7 +154,7 @@ auto compileArguments(int argc, char* argv[]) -> struct inputs {
                         break;
                     }
                     case 'V': {
-                        Config::VERBOSE = true;
+                        Config::verbose(true);
                         break;
                     }
                     default: {

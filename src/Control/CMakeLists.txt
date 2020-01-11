@@ -1,4 +1,12 @@
 project(Control)
 
 include_directories("../Vision")
-add_library(Control gamecontroller.h robotcontol.h ../config.hpp.in streamcontrol.hpp streamcontroldaemon.cpp streamcontroldaemon.hpp robot.cpp robot.hpp)
+include_directories("../Config")
+
+add_library(Control gamecontroller.h robotcontol.h
+        streamcontrol.hpp streamcontroldaemon.cpp
+        streamcontroldaemon.hpp robot.cpp robot.hpp)
+
+target_link_libraries(Control
+        PUBLIC libopencv_core.so
+        PUBLIC libwiringPi.so)

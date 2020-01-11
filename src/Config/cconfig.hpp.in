@@ -20,8 +20,6 @@ namespace Config {
 
     const float ROBOT_SPEED_PER_SEC = @ROBOT_SPEED_PER_SECOND@;
     const float TRIGGER_FIRING_THRESHOLD = @TRIGGER_FIRING_THRESHOLD@;
-
-    bool VERBOSE = false;
 }
 
 #endif //BEHOLDER_CONFIG_HPP_IN

@@ -10,8 +10,8 @@
 #include <string>
 #include <memory>
 
-#include "robot.hpp"
-#include "config.hpp"
+#include <robot.hpp>
+#include <config.hpp>
 
 struct inputs {
     std::unique_ptr<std::string> serialPath;
