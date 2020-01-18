@@ -21,4 +21,4 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cconfig.hpp.in
         ${CMAKE_CURRENT_BINARY_DIR}/cconfig.hpp)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(Config config.hpp cconfig.hpp varconfig.hpp varconfig.cpp)
+add_library(Config config.hpp ${CMAKE_CURRENT_BINARY_DIR}/cconfig.hpp varconfig.hpp varconfig.cpp)
