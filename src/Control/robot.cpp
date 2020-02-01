@@ -5,6 +5,11 @@
 #include "robot.hpp"
 
 namespace Control {
+    auto clearSerialBuffer(int fd) noexcept -> void {
+        uint8_t buffer = 0;
+        while (read(fd, &buffer, 1) != 0);
+    }
+
     auto findPotentialSerialPorts() -> std::shared_ptr<std::vector<std::tuple<std::string, speed_t>>> {
         // Get potential paths
         DIR* dir;
@@ -50,11 +55,29 @@ namespace Control {
 
     auto Robot::__init(const std::string& devicePath, int baud, std::vector<std::shared_ptr<Vision::Camera>> cameras,
                        char responseChar, bool useResponseChar) -> void {
-        __fd = serialOpen(devicePath.c_str(), baud);
+        // Handle Serial communications
+        struct termios options = {0};
+        __fd = open(devicePath.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
         if (__fd < 0) throw std::runtime_error((std::string) "Could not open serial for "
                                                         + "the device at \"" + devicePath + "\" with the speed of "
                                                         + std::to_string(baud) + " baud.");
 
+        if (tcgetattr(__fd, &options) < 0) {
+            throw std::runtime_error((std::string) "Could not pull options from the device at \""
+                                              + devicePath + ".\"");
+        }
+
+        if (cfsetospeed(&options, baud) < 0 || cfsetispeed(&options, baud) < 0) {
+            throw std::runtime_error((std::string) "Could not set baud rate to " + std::to_string(baud)
+                                              + " for the device at \"" + devicePath + ".\"");
+        }
+
+        if (tcsetattr(__fd, TCSAFLUSH, &options) < 0) {
+            throw std::runtime_error((std::string) "Could not set options from the device at \""
+                                     + devicePath + ".\"");
+        }
+
+        // Rest of init
         _cameras = std::move(cameras);
         if (useResponseChar) __responseChar = std::make_unique<char>(responseChar);
     }
@@ -66,9 +89,14 @@ namespace Control {
     }
 
     auto Robot::__updateState() noexcept -> void {
+        // Make a tape out of the struct for writing
         char* structTape = static_cast<char*>(static_cast<void*>(&_robotState));
-        serialPutchar(__fd, Config::SERIAL_STATE_CHAR);
-        serialPuts(__fd, structTape);
+
+        // Send state data
+        write(__fd, &Config::SERIAL_STATE_CHAR, 1);
+        write(__fd, &structTape, sizeof(ROBOT_CONTROL_BULK));
+
+        // Kill the tape
         delete[] structTape;
     }
 
@@ -97,19 +125,20 @@ namespace Control {
     }
 
     Robot::~Robot() {
-        serialFlush(__fd);
-        serialClose(__fd);
+        clearSerialBuffer(__fd);
+        close(__fd);
     }
 
     auto Robot::isConnected() noexcept -> bool {
         // TEST
-        serialPutchar(__fd, Config::SERIAL_TEST_CHAR);
-        serialPuts(__fd, "OK");
+        write(__fd, &Config::SERIAL_TEST_CHAR, 1);
+        write(__fd, "OK", 2);
         std::this_thread::sleep_for(std::chrono::milliseconds(Config::SERIAL_RESPONSE_TIME_MILLIS));
 
         // ACK
-        if (serialDataAvail(__fd) && (__responseChar == nullptr || serialGetchar(__fd) == *__responseChar)) {
-            serialFlush(__fd);
+        uint8_t tempBuf = 0;
+        if (read(__fd, &tempBuf, 1) > 0 && (__responseChar == nullptr || tempBuf == *__responseChar)) {
+            clearSerialBuffer(__fd);
             return true;
         }
 

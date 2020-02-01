@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <cstdint>
 #include <dirent.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -19,7 +20,6 @@
 
 #include "camera.hpp"
 
-#include <wiringSerial.h>
 #include <opencv2/opencv.hpp>
 
 #include "config.hpp"
@@ -31,6 +31,11 @@ namespace Control {
      * @return A vector of paths contained in strings or nullptr if /dev/ could not be opened.
      */
     auto findPotentialSerialPorts() -> std::shared_ptr<std::vector<std::tuple<std::string, speed_t>>>;
+
+    /**
+     * Clears out all unread data from a serial buffer.
+     */
+    auto clearSerialBuffer(int fd) noexcept -> void;
 
     class Robot {
     private:
