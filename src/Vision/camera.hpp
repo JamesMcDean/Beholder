@@ -37,7 +37,7 @@ namespace Vision {
 
         auto read() -> cv::Mat;
 
-        auto isCalibrated() -> bool;
+        auto calibrated() -> bool;
     };
 }
 

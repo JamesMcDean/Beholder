@@ -26,7 +26,7 @@ namespace Vision {
     auto Camera::capture() -> void {
         device >> rawImage;
 
-        if (!isCalibrated()) {
+        if (!calibrated()) {
             return;
         }
 
@@ -50,10 +50,10 @@ namespace Vision {
     }
 
     auto Camera::read() -> cv::Mat {
-        return isCalibrated() ? calibratedImage : rawImage;
+        return calibrated() ? calibratedImage : rawImage;
     }
 
-    auto Camera::isCalibrated() -> bool {
+    auto Camera::calibrated() -> bool {
         return !settingsPath.empty();
     }
 }
