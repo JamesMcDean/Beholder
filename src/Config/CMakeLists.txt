@@ -7,6 +7,9 @@ set(SERIAL_STATE_CHAR "S" CACHE STRING
 set(SERIAL_TEST_CHAR "T" CACHE STRING
         "The char defining a test message being sent.")
 
+set(ROBOT_SETTINGS_PATH "../../docs/C270-settings.json" CACHE STRING
+        "The path which the robot settings file exists at.")
+
 set(REMOTE_CONTROL_PORT "5455" CACHE STRING
         "The port that handles the control data sent from the control. (TCP)")
 set(REMOTE_STREAM_PORT "5455" CACHE STRING
@@ -18,7 +21,8 @@ set(TRIGGER_FIRING_THRESHOLD "0.5" CACHE STRING
         "The point at which the trigger depression means fire ([0.0, 1.0]).")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cconfig.hpp.in
-        ${CMAKE_CURRENT_BINARY_DIR}/cconfig.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/cconfig.hpp)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(Config config.hpp ${CMAKE_CURRENT_BINARY_DIR}/cconfig.hpp varconfig.hpp varconfig.cpp)
+add_library(Config config.hpp ${CMAKE_CURRENT_SOURCE_DIR}/cconfig.hpp varconfig.hpp varconfig.cpp)
+
+
