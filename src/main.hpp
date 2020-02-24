@@ -11,18 +11,20 @@
 #include <memory>
 
 #include <robot.hpp>
+#include <streamcontroldaemon.hpp>
 #include <config.hpp>
 
 struct inputs {
-    std::unique_ptr<std::string> serialPath;
-    std::unique_ptr<int> baud;
-    std::unique_ptr<uint> responseTime;
-    std::unique_ptr<char> stateChar;
-    std::unique_ptr<char> testChar;
-    std::unique_ptr<uint16_t> controlPort;
-    std::unique_ptr<uint16_t> streamPort;
-    std::unique_ptr<float> speed;
-    std::unique_ptr<float> threshold;
+    std::shared_ptr<std::string> serialPath;
+    std::shared_ptr<int> baud;
+    std::shared_ptr<uint> responseTime;
+    std::shared_ptr<char> stateChar;
+    std::shared_ptr<char> testChar;
+    std::shared_ptr<std::string> robotSettingsPath;
+    std::shared_ptr<uint16_t> controlPort;
+    std::shared_ptr<uint16_t> streamPort;
+    std::shared_ptr<float> speed;
+    std::shared_ptr<float> threshold;
 };
 
 auto printVersion() -> void;

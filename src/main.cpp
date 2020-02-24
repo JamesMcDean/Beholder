@@ -12,7 +12,20 @@ auto main(int argc, char* argv[]) -> int {
         return pResult;
     }
 
+    // Attach cameras
+    auto cameraInfo = Vision::parseCameraSettings(*arguments.robotSettingsPath);
+    auto cameras = std::vector<std::shared_ptr<Vision::Camera>>(cameraInfo->size());
+    for (int index = 0; index < cameraInfo->size(); index++) {
+        // For some reason I can't construct the Camera inside the arguments list like everything else,
+        // so this argument version was needed
+        cameras[index] = std::make_shared<Vision::Camera>(cameraInfo->at(index));
+    }
 
+    // Create robot and robot stream
+    auto robot = std::make_shared<Control::Robot>(*arguments.serialPath, *arguments.baud,
+            cameras, *arguments.testChar);
+    auto daemon = std::make_shared<Control::StreamControlDaemon>(robot,
+            *arguments.streamPort, *arguments.controlPort);
 
     return 0;
 }
@@ -56,6 +69,9 @@ auto printHelp() -> void {
 
     printf("   --serial-test-char [char TEST]\t");
     printf("The optional char to use when testing for a response.\n");
+
+    printf("-x --settings-path [string PATH]\t");
+    printf("The path that contain the robot settings (part positioning etc).\n");
 
     printf("   --control-port [uint16_t PORT_NUM]\t");
     printf("Sets the TCP port to use for the control data.\n");
@@ -186,6 +202,10 @@ auto compileArguments(int argc, char* argv[]) -> struct inputs {
                         *(result.threshold) = std::stof(next);
                         break;
                     }
+                    case 'x': {
+                        *(result.robotSettingsPath) = next;
+                        break;
+                    }
                     // Skips
                     case 'h':
                     case 'v':
@@ -230,7 +250,7 @@ auto processArguments(struct inputs* arguments) -> int {
 
         fprintf(stdout, "*");
         for (auto port : *serialPorts) {
-            fprintf(stdout, "\t%s <-> %d\n", std::get<0>(port).c_str(), std::get<1>(port));
+            fprintf(stdout, "\t%s <-> %d\n", std::get<0>(port).c_str(), (int) std::get<1>(port));
         }
 
         auto port = serialPorts->at(0);
@@ -246,6 +266,7 @@ auto processArguments(struct inputs* arguments) -> int {
     if (arguments->streamPort == nullptr) *arguments->streamPort = Config::REMOTE_STREAM_PORT;
     if (arguments->speed == nullptr) *arguments->speed = Config::ROBOT_SPEED_PER_SEC;
     if (arguments->threshold == nullptr) *arguments->threshold = Config::TRIGGER_FIRING_THRESHOLD;
+    if (arguments->robotSettingsPath == nullptr) *arguments->robotSettingsPath = Config::ROBOT_SETTINGS_PATH;
 
     return 0;
 }
